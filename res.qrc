@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/2048_title_in.png</file>
+        <file>images/again_icon.png</file>
+        <file>images/again_icon_pressed.png</file>
+        <file>images/back_icon.png</file>
+        <file>images/back_icon_pressed.png</file>
+        <file>images/game_bg.png</file>
+        <file>images/game_bg_light.png</file>
+        <file>images/index_bg.png</file>
+        <file>images/rank_border.png</file>
+        <file>images/rank_icon.png</file>
+        <file>images/rank_icon_pressed.png</file>
+        <file>images/square2.png</file>
+        <file>images/square4.png</file>
+        <file>images/square8.png</file>
+        <file>images/square16.png</file>
+        <file>images/square32.png</file>
+        <file>images/square64.png</file>
+        <file>images/square128.png</file>
+        <file>images/square256.png</file>
+        <file>images/square512.png</file>
+        <file>images/square1024.png</file>
+        <file>images/square2048.png</file>
+        <file>images/start_icon.png</file>
+        <file>images/start_icon_pressed.png</file>
+        <file>images/cont_icon.png</file>
+        <file>images/cont_icon_pressed.png</file>
+        <file>images/squareX.png</file>
+    </qresource>
+    <qresource prefix="/sounds">
+        <file>sounds/icon_in.wav</file>
+        <file>sounds/BGM.wav</file>
+        <file>sounds/icon_click.wav</file>
+    </qresource>
+</RCC>
