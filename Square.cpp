@@ -18,35 +18,46 @@ Square::Type Square::getType()
     return type;
 }
 
-void Square::setExist(bool flag)
+void Square::setEffect(Square::Effect x)
 {
-    exist = flag;
-    if(!flag)
-        hide();
-    else
-        show();
+    effect = x;
+    updatePixmap();
 }
 
-bool Square::isExist()
+Square::Effect Square::getEffect()
 {
-    return exist;
+    return effect;
 }
 
-void Square::setcor(int x, int y)
-{
-    this->ix = x;
-    this->iy = y;
-}
+//void Square::setExist(bool flag)
+//{
+//    exist = flag;
+//    if(!flag)
+//        hide();
+//    else
+//        show();
+//}
 
-int Square::getX()
-{
-    return ix;
-}
+//bool Square::isExist()
+//{
+//    return exist;
+//}
 
-int Square::getY()
-{
-    return iy;
-}
+//void Square::setcor(int x, int y)
+//{
+//    this->ix = x;
+//    this->iy = y;
+//}
+
+//int Square::getX()
+//{
+//    return ix;
+//}
+
+//int Square::getY()
+//{
+//    return iy;
+//}
 
 QPropertyAnimation *Square::getMoveAnimation()
 {
@@ -93,35 +104,76 @@ bool Square::operator==(const Square &x)
         return false;
 }
 
+bool Square::operator!=(const Square &x)
+{
+    return !(*this == x);
+}
+
 const Square &Square::operator=(const Square &x)    // only change type, need call updatePixmap();
 {
     this->type = x.type;
+    this->effect = x.effect;
+    updatePixmap();
+
+    return *this;
+}
+
+void Square::randCreate()
+{
+    int ran = rand()%4;
+    type = static_cast<Square::Type>(ran);
+    effect = NO_EFFECT;
     updatePixmap();
 }
 
 void Square::init()
 {
-    exist = false;
-    type = NON;
+//    exist = false;
+    type = FIRE;
+    effect = NO_EFFECT;
 }
 
-void Square::updatePixmap() //++
-{
+void Square::updatePixmap()
+{    
     switch(type)
     {
         case FIRE:
-            setPixmap(QPixmap(":/images/images/square2.png"));
+            if(effect == NO_EFFECT)
+                setPixmap(QPixmap(":/images/images/square2.png"));
+            else if(effect == VERTICAL)
+                setPixmap(QPixmap(":/images/images/square32.png"));
+            else if(effect == HORIZON)
+                setPixmap(QPixmap(":/images/images/square64.png"));
             break;
         case WOOD:
-            setPixmap(QPixmap(":/images/images/square4.png"));
+            if(effect == NO_EFFECT)
+                setPixmap(QPixmap(":/images/images/square4.png"));
+            else if(effect == VERTICAL)
+                setPixmap(QPixmap(":/images/images/square128.png"));
+            else if(effect == HORIZON)
+                setPixmap(QPixmap(":/images/images/square256.png"));
             break;
         case THUNDER:
-            setPixmap(QPixmap(":/images/images/square8.png"));
+            if(effect == NO_EFFECT)
+                setPixmap(QPixmap(":/images/images/square8.png"));
+            else if(effect == VERTICAL)
+                setPixmap(QPixmap(":/images/images/square512.png"));
+            else if(effect == HORIZON)
+                setPixmap(QPixmap(":/images/images/square1024.png"));
             break;
         case WATER:
-            setPixmap(QPixmap(":/images/images/square16.png"));
+            if(effect == NO_EFFECT)
+                setPixmap(QPixmap(":/images/images/square16.png"));
+            else if(effect == VERTICAL)
+                setPixmap(QPixmap(":/images/images/square2048.png"));
+            else if(effect == HORIZON)
+                setPixmap(QPixmap(":/images/images/squareX.png"));
             break;
-        case NON:
+        case BOMB:
             setPixmap(QPixmap(":/images/images/squareX.png"));
+            break;
+        case STAR:
+            setPixmap(QPixmap(":/images/images/squareX.png"));
+            break;
     }
 }

@@ -21,7 +21,7 @@ Icon::Icon(Icon::Type type, QGraphicsItem * parent)
     clickSound->setSource(QUrl("qrc:/sounds/sounds/icon_click.wav"));
 }
 
-void Icon::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
+void Icon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     if(inSoundFlag && !Mainwindow::soundMute)
         inSound->play();
@@ -45,7 +45,7 @@ void Icon::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
     }
 }
 
-void Icon::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) // reset unpressed icon
+void Icon::hoverLeaveEvent(QGraphicsSceneHoverEvent *) // reset unpressed icon
 {
     setImage(type);
 }

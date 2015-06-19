@@ -15,8 +15,8 @@
 #include <QPropertyAnimation>
 #include "Icon.h"
 #include <QTimer>
-#include <utility>
-#include <vector>
+#include <QPair>
+#include <QVector>
 using namespace std;
 #define wnum 15 // # of squares
 #define hnum 10
@@ -81,22 +81,24 @@ private:
     bool hasClick;
     int lasti, lastj;
     int curi, curj;
-    vector<pair<int, int> >special;
+    bool specialLink;
 
     int checkend();
     void gameover();
-    void updateExist();
+//    void updateExist();
     void addScore();
     void startLinkAnimation();
     void startFallAnimation();
     void insertRank();
     void setRect();
-    int set3Link();
+    bool set3Link();
+    bool checkL();
+    void doEffect();
     void Fall();
     void reservedSquares();
     void checkX(int x);
     bool dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType);
-//    void setAllLink();
+    bool setLink();
 };
 
 #endif // GAMESCENE_H

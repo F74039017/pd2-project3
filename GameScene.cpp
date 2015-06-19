@@ -33,11 +33,10 @@ GameScene::GameScene(QObject *parent)
         {
             squares[i][j] = new Square();
             squares[i][j]->setScale(0.1);
-            squares[i][j]->setcor(i, j);
+//            squares[i][j]->setcor(i, j);
             squares[i][j]->setPos(125+50*j,125+50*i);
             squaresRect[i][j].setRect(125+50*j, 125+50*i, 50, 50);
             addItem(squares[i][j]);
-            squares[i][j]->hide();
         }
 
 
@@ -168,15 +167,8 @@ void GameScene::init()
     recordNum = qry.value(0).toInt();
 //    qDebug() << "update new recordNum = " << recordNum;
 
-
     /* init squares */
-    for(int i=0; i<hnum; i++)  // temp to show all squares in the window
-        for(int j=0; j<wnum; j++)  //-- 0 and false after test
-        {
-            int type = rand() % Square::typenum;
-            squares[i][j]->setType(static_cast<Square::Type>(type));
-            squares[i][j]->setExist(true);
-        }
+    initsquares();
 
     /* init score */
     score->setText("0");
@@ -233,9 +225,41 @@ void GameScene::init()
 
     timeLabel->hide();
 
-    /* init squares */
-    initsquares();
+    /* init special link */
+    specialLink = false;
 
+    /* test L check --*/
+//    squares[1][2]->setType(Square::FIRE);
+//    squares[1][3]->setType(Square::FIRE);
+//    squares[2][1]->setType(Square::FIRE);
+//    squares[3][1]->setType(Square::FIRE);
+//    squares[1][1]->setType(Square::WATER);
+//    squares[1][0]->setType(Square::FIRE);
+
+    /* test 4 in line */
+//    squares[0][1]->setType(Square::FIRE);
+//    squares[1][1]->setType(Square::FIRE);
+//    squares[2][1]->setType(Square::FIRE);
+//    squares[4][1]->setType(Square::FIRE);
+//    squares[3][1]->setType(Square::WATER);
+//    squares[3][2]->setType(Square::FIRE);
+//    squares[5][1]->setType(Square::FIRE);
+
+    /* test L */
+//    squares[0][1]->setType(Square::FIRE);
+//    squares[1][1]->setType(Square::FIRE);
+//    squares[2][1]->setType(Square::WATER);
+//    squares[3][1]->setType(Square::FIRE);
+//    squares[2][2]->setType(Square::FIRE);
+//    squares[2][3]->setType(Square::FIRE);
+
+    /* test star */
+    squares[0][1]->setType(Square::FIRE);
+    squares[1][1]->setType(Square::FIRE);
+    squares[2][1]->setType(Square::WATER);
+    squares[2][2]->setType(Square::FIRE);
+    squares[3][1]->setType(Square::FIRE);
+    squares[4][1]->setType(Square::FIRE);
 }
 
 void GameScene::resetIcon()
@@ -246,6 +270,10 @@ void GameScene::resetIcon()
 
 void GameScene::initsquares()
 {
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+            squares[i][j]->randCreate();
+
     while(set3Link())
     {
         for(int i=0; i<hnum; i++)
@@ -253,8 +281,7 @@ void GameScene::initsquares()
             {
                 if(islink[i][j])
                 {
-                    int type = rand()%Square::typenum;
-                    squares[i][j]->setType(static_cast<Square::Type>(type));
+                    squares[i][j]->randCreate();
                 }
                 islink[i][j] = false;
             }
@@ -263,8 +290,6 @@ void GameScene::initsquares()
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(isAnimation)
-        return;
 
     if(backIconRect->contains(event->scenePos().toPoint()) && theEnd)
     {
@@ -275,6 +300,8 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         emit pressBack();
     }
 
+    if(isAnimation)
+        return;
 
     exchangeGroup->clear();
     /* find clicked squares */
@@ -304,13 +331,18 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     curj = j;
 
                     /* exchange */
-                    Square::Type temp = squares[i][j]->getType();
+                    Square temp;
+                    temp = *squares[i][j];
                     *squares[i][j] = *squares[lasti][lastj];
-                    squares[lasti][lastj]->setType(temp);
+                    *squares[lasti][lastj] = temp;
                     squares[i][j]->setMoveStart(squares[lasti][lastj]->pos());
                     squares[lasti][lastj]->setMoveStart(squares[i][j]->pos());
                     exchangeGroup->addAnimation(squares[i][j]->getMoveAnimation());
                     exchangeGroup->addAnimation(squares[lasti][lastj]->getMoveAnimation());
+
+                    /* set bomb and star link */
+                    if(squares[curi][curj]->getType()==Square::BOMB || squares[curi][curj]->getType()==Square::STAR)
+                        islink[curi][curj] = true, specialLink = true;
                 }
                 break;
             }
@@ -323,6 +355,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if(valid)
         {
             isReExchange = false;
+            isAnimation = true;
             exchangeGroup->start();
         }
     }
@@ -335,21 +368,121 @@ void GameScene::keyPressEvent(QKeyEvent *event)
 //    for(int i=0; i<hnum; i++)
 //        for(int j=0; j<wnum; j++)
 //            islink[i][j] = false;
+    for(int i=0; i<hnum; i++)
+        qDebug() << "i=" << i << " " << squares[i][1]->getType();
 }
 
-int GameScene::set3Link()
+bool GameScene::set3Link()
 {
-    int linknumber=0;
+    bool flag = false;
     /* scan three link */
     for(int i=0; i<hnum; i++)
         for(int j=0; j<wnum; j++)
         {
+            /* 3 squares in line */
             if(!(0>i-1 || i+1==hnum) && *squares[i][j]==*squares[i+1][j] && *squares[i][j]==*squares[i-1][j])
-                islink[i][j] = islink[i+1][j] = islink[i-1][j] = true, linknumber++;
+                islink[i][j] = islink[i+1][j] = islink[i-1][j] = true, flag = true;
             if(!(0>j-1 || j+1==wnum) && *squares[i][j]==*squares[i][j+1] && *squares[i][j]==*squares[i][j-1])
-                islink[i][j] = islink[i][j+1] = islink[i][j-1] = true, linknumber++;
+                islink[i][j] = islink[i][j+1] = islink[i][j-1] = true, flag = true;
         }
-    return linknumber;
+    return flag;
+}
+
+bool GameScene::checkL()
+{
+    bool flag = false;
+    const int mi[4] = {-1, 0, 1, 0};    // up right down left
+    const int mj[4] = {0, 1, 0, -1};
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+        {
+            QVector<QPair<int, int> > record[4];
+            for(int k=0; k<4; k++)  // expand and track
+            {
+                int e=1;
+                while((0<=i+mi[k]*e) && (i+mi[k]*e<hnum) && (0<=j+mj[k]*e) && (j+mj[k]*e<wnum)) // in range
+                {
+                    if(*squares[i+mi[k]*e][j+mj[k]*e] != *squares[i][j])
+                        break;
+
+                    /* record pos in vector */
+                    record[k].push_back(qMakePair(i+mi[k]*e, j+mj[k]*e));
+                    e++;
+                }
+            }
+
+            /* find L */
+            bool valid = false;
+            for(int k=0; k<4; k++)
+                if(record[k].size()>=2 && record[(k+1)%4].size()>=2)
+                    valid = true;
+
+            /* set special squares */
+            if(valid)
+            {
+                squares[i][j]->setType(Square::BOMB), reservedlink[i][j] = true;
+
+                /* set islink[] */
+                for(int k=0; k<4; k++)
+                    for(QVector<QPair<int, int> >::iterator iter=record[k].begin(); iter<record[k].end(); iter++)
+                        islink[iter->first][iter->second] = true;
+
+                /* set flag */
+                flag = true;
+            }
+        }
+    return flag;
+}
+
+void GameScene::doEffect()  // recursive effect
+{
+    bool flag = false;
+    const int mi[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+    const int mj[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+        {
+            if(islink[i][j])    // disappear
+            {
+                Square::Type type = squares[i][j]->getType();
+                switch(type)
+                {
+                case Square::BOMB:
+                    squares[i][j]->setEffect(Square::NO_EFFECT);
+                    for(int k=0; k<8; k++)
+                        if(0<=i+mi[k] && i+mi[k]<hnum && 0<=j+mj[k] && j+mj[k]<wnum)    // in range
+                            if(!islink[i+mi[k]][j+mj[k]])
+                                islink[i+mi[k]][j+mj[k]] = true, flag = true;   // check islink[] expand
+                    break;
+                case Square::STAR:
+                    squares[i][j]->setEffect(Square::NO_EFFECT);
+                    for(int a=0; a<hnum; a++)
+                        for(int b=0; b<wnum; b++)
+                            if(*squares[lasti][lastj] == *squares[a][b])
+                                islink[a][b] = true;
+                    break;
+                }
+                Square::Effect effect = squares[i][j]->getEffect();
+                switch (effect)
+                {
+                case Square::VERTICAL:
+                    squares[i][j]->setEffect(Square::NO_EFFECT);
+                    for(int k=0; k<hnum; k++)
+                        if(!islink[k][j])
+                            islink[k][j] = true, flag = true;
+                    break;
+                case Square::HORIZON:
+                    squares[i][j]->setEffect(Square::NO_EFFECT);
+                    for(int k=0; k<wnum; k++)
+                        if(!islink[i][k])
+                            islink[i][k] = true, flag = true;
+                    break;
+                }
+
+            }
+        }
+    if(flag)    // call recursive
+        doEffect();
 }
 
 void GameScene::Fall()
@@ -382,8 +515,7 @@ void GameScene::Fall()
             }
         for(; k>=0; k--)
         {
-            int type = rand()%Square::typenum;
-            squares[k][j]->setType(static_cast<Square::Type>(type));
+            squares[k][j]->randCreate();
             squares[k][j]->setMoveStart(QPointF(squares[k][j]->x(), squares[k][j]->y()-50));
             fallgroup2->addAnimation(squares[k][j]->getMoveAnimation());
             squares[k][j]->hide();
@@ -416,40 +548,87 @@ void GameScene::checkX(int x)
             }
 }
 
+/* called by checkX to set reservedlink[] and assign new special squares */
 bool GameScene::dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType)
 {
     if(i>=hnum || j>=wnum || lastType!=squares[i][j]->getType() || islink[i][j])  // used or out of border
     {
         if(cnt>=x)
+        {
+            islink[i][j] = true;
             return true;
+        }
         else
             return false;
     }
 
-    if(dir==1)  // right
+    if(dir==1)  // horizon
     {
         if(dfs(i, j+1, x, cnt+1, dir, squares[i][j]->getType()))
         {
             islink[i][j] = true;
             if(cnt==0)
-                squares[i][j]->setType(Square::NON), reservedlink[i][j] = true;
+            {
+                if(x == 4)
+                    squares[i][j]->setEffect(Square::HORIZON);
+                else if(x == 5)
+                    squares[i][j]->setType(Square::STAR);
+                reservedlink[i][j] = true;
+            }
             return true;
         }
         else
             return false;
     }
-    else    // down
+    else    // vertical
     {
         if(dfs(i+1, j, x, cnt+1, dir, squares[i][j]->getType()))
         {
             islink[i][j] = true;
             if(cnt==0)
-                squares[i][j]->setType(Square::NON), reservedlink[i][j] = true;
+            {
+                if(x == 4)
+                    squares[i][j]->setEffect(Square::VERTICAL);
+                else if(x == 5)
+                    squares[i][j]->setType(Square::STAR);
+                reservedlink[i][j] = true;
+            }
             return true;
         }
         else
             return false;
     }
+}
+
+bool GameScene::setLink()
+{
+    bool flag = false;
+    /* reset reservedlink before a move */
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+            reservedlink[i][j] = false;
+
+    /* check 5 squares in line, and create special squares */
+    checkX(5);  // check and set reservedlink
+
+    /* check L link */
+    if(checkL())
+        flag = true;
+
+    /* check 4 squares in line */
+    checkX(4);
+
+    /* set 3 squares in line */
+    if(set3Link())
+        flag = true;
+
+    /* provent new special squares from disappeared */
+    reservedSquares();
+
+    /* effect chain */
+    doEffect();
+
+    return flag || specialLink; // specialLink check for bomb or star effects
 }
 
 
@@ -471,7 +650,6 @@ void GameScene::addScore()
 
 void GameScene::startLinkAnimation()
 {
-    isAnimation = true;
     linkgroup->start();
 }
 
@@ -495,13 +673,13 @@ void GameScene::endDisappearAnimation()
 
 void GameScene::endFallAnimation()
 {
+    /* reset islink */
     for(int i=0; i<hnum; i++)
         for(int j=0; j<wnum; j++)
             islink[i][j] = false;
     fallSquenceGroup->clear();
 
-    set3Link();  // bool flag
-    int anima_cnt=0;
+    int hasLink = setLink();  // bool flag
     for(int i=0; i<hnum; i++)
         for(int j=0; j<wnum; j++)
         {
@@ -509,10 +687,9 @@ void GameScene::endFallAnimation()
             {
                 squares[i][j]->setDisapper();
                 linkgroup->addAnimation(squares[i][j]->getDisappearAnimation());
-                anima_cnt++;
             }
         }
-    if(!anima_cnt)
+    if(!hasLink)
     {
         isAnimation = false;
         return;
@@ -532,24 +709,14 @@ void GameScene::endExchangeAnimation()
     if(isReExchange)
     {
         exchangeGroup->clear();
+        isAnimation = false;
         return;
     }
 
-    /* reset reservedlink before a move */
-    for(int i=0; i<hnum; i++)
-        for(int j=0; j<wnum; j++)
-            reservedlink[i][j] = false;
-
-    /* check 5 squares in line, and create special squares */
-    checkX(5);  // check and set reservedlink
-
-    /* check 4 squares in line */
-    checkX(4);
-
     /* disappear animation */
-    if(set3Link())  // bool flag
+    if(setLink())  // bool flag
     {
-        reservedSquares();  // protect special position
+        specialLink = false;
         for(int i=0; i<hnum; i++)
             for(int j=0; j<wnum; j++)
                 if(islink[i][j])
@@ -562,9 +729,10 @@ void GameScene::endExchangeAnimation()
     else    // re-exchange
     {
         isReExchange = true;
-        Square::Type temp = squares[curi][curj]->getType();
+        Square temp;
+        temp = *squares[curi][curj];
         *squares[curi][curj] = *squares[lasti][lastj];
-        squares[lasti][lastj]->setType(temp);
+        *squares[lasti][lastj] = temp;
         exchangeGroup->start();
     }
 }
