@@ -13,8 +13,8 @@ class Square: public QObject, public QGraphicsPixmapItem
     Q_PROPERTY (qreal opacity READ opacity WRITE setOpacity)
 
 public:
-    enum Type{FIRE, WOOD, THUNDER, WATER, BOMB, STAR};
-    enum Effect{VERTICAL, HORIZON, NO_EFFECT};
+    enum Type{FIRE, WOOD, THUNDER, WATER, STAR};
+    enum Effect{VERTICAL, HORIZON, BOMB, NO_EFFECT};
     static const int typenum = 4;
     Square(QGraphicsItem * parent = 0);
     void setType(Type value);
@@ -36,6 +36,7 @@ public:
     bool operator!=(Square const &x);
     const Square &operator=(Square const &x);
     void randCreate();
+    virtual void updatePixmap();
 
 private:
     Type type;
@@ -48,7 +49,6 @@ private:
     QPropertyAnimation *disappear;
 
     void init();
-    virtual void updatePixmap();
 };
 
 #endif // SQUARE

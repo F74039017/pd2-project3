@@ -1,5 +1,6 @@
 #include "Square.h"
 #include <QDebug>
+#define AnimationSpeed 250
 
 Square::Square(QGraphicsItem * parent)
         :QGraphicsPixmapItem(parent)
@@ -72,7 +73,7 @@ QPropertyAnimation *Square::getDisappearAnimation()
 void Square::setMoveStart(QPointF s)
 {
     move = new QPropertyAnimation(this, "pos", this);
-    move->setDuration(250);  // 50 is moderate
+    move->setDuration(AnimationSpeed);  // 50 is moderate
     move->setStartValue(s);
     move->setEndValue(recoverPoint);
 }
@@ -80,7 +81,7 @@ void Square::setMoveStart(QPointF s)
 void Square::setDisapper()
 {
     disappear = new QPropertyAnimation(this, "opacity", this);
-    disappear->setDuration(250);
+    disappear->setDuration(AnimationSpeed);
     disappear->setStartValue(1.0);
     disappear->setEndValue(0.0);
 }
@@ -139,41 +140,46 @@ void Square::updatePixmap()
     {
         case FIRE:
             if(effect == NO_EFFECT)
-                setPixmap(QPixmap(":/images/images/square2.png"));
+                setPixmap(QPixmap(":/images/images/FireSquare.png"));
             else if(effect == VERTICAL)
-                setPixmap(QPixmap(":/images/images/square32.png"));
+                setPixmap(QPixmap(":/images/images/FireSquareV.png"));
             else if(effect == HORIZON)
-                setPixmap(QPixmap(":/images/images/square64.png"));
+                setPixmap(QPixmap(":/images/images/FireSquareH.png"));
+            else if(effect == BOMB)
+                setPixmap(QPixmap(":/images/images/FireSquareB.png"));
             break;
         case WOOD:
             if(effect == NO_EFFECT)
-                setPixmap(QPixmap(":/images/images/square4.png"));
+                setPixmap(QPixmap(":/images/images/LeafSquare.png"));
             else if(effect == VERTICAL)
-                setPixmap(QPixmap(":/images/images/square128.png"));
+                setPixmap(QPixmap(":/images/images/LeafSquareV.png"));
             else if(effect == HORIZON)
-                setPixmap(QPixmap(":/images/images/square256.png"));
+                setPixmap(QPixmap(":/images/images/LeafSquareH.png"));
+            else if(effect == BOMB)
+                setPixmap(QPixmap(":/images/images/LeafSquareB.png"));
             break;
         case THUNDER:
             if(effect == NO_EFFECT)
-                setPixmap(QPixmap(":/images/images/square8.png"));
+                setPixmap(QPixmap(":/images/images/ThunderSquare.png"));
             else if(effect == VERTICAL)
-                setPixmap(QPixmap(":/images/images/square512.png"));
+                setPixmap(QPixmap(":/images/images/ThunderSquareV.png"));
             else if(effect == HORIZON)
-                setPixmap(QPixmap(":/images/images/square1024.png"));
+                setPixmap(QPixmap(":/images/images/ThunderSquareH.png"));
+            else if(effect == BOMB)
+                setPixmap(QPixmap(":/images/images/ThunderSquareB.png"));
             break;
         case WATER:
             if(effect == NO_EFFECT)
-                setPixmap(QPixmap(":/images/images/square16.png"));
+                setPixmap(QPixmap(":/images/images/WaterSquare.png"));
             else if(effect == VERTICAL)
-                setPixmap(QPixmap(":/images/images/square2048.png"));
+                setPixmap(QPixmap(":/images/images/WaterSquareV.png"));
             else if(effect == HORIZON)
-                setPixmap(QPixmap(":/images/images/squareX.png"));
-            break;
-        case BOMB:
-            setPixmap(QPixmap(":/images/images/squareX.png"));
+                setPixmap(QPixmap(":/images/images/WaterSquareH.png"));
+            else if(effect == BOMB)
+                setPixmap(QPixmap(":/images/images/WaterSquareB.png"));
             break;
         case STAR:
-            setPixmap(QPixmap(":/images/images/squareX.png"));
+            setPixmap(QPixmap(":/images/images/StarSquare.png"));
             break;
     }
 }

@@ -26,10 +26,11 @@ using namespace std;
 class GameScene: public QGraphicsScene
 {
     Q_OBJECT
-
 public:
+    enum Mode{STEP, TIME};
     GameScene(QObject *parent=0);
     void initsquares();
+    void setMode(GameScene::Mode mode);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void init();
@@ -46,6 +47,7 @@ public slots:
 //    void countDown();
 
 private:
+    GameScene::Mode mode;
     QGraphicsPixmapItem *gameBG;
     QGraphicsPixmapItem *title;
     QGraphicsSimpleTextItem *scoreLabel;
@@ -58,9 +60,8 @@ private:
     QGraphicsSimpleTextItem *bestScore;
     Square *squares[hnum][wnum];
     bool islink[hnum][wnum];
-    bool reservedlink[hnum][wnum];
     QRect squaresRect[hnum][wnum];
-    bool theEnd;
+    bool theEnd;    //
     bool isAnimation;
     Icon *backIcon;
     Icon *againIcon;    // if win, "cont." instead
@@ -73,32 +74,34 @@ private:
     QParallelAnimationGroup *exchangeGroup;
     QParallelAnimationGroup *reexchangeGroup;
     bool isReExchange;
-    bool isWin;
-    QTimer *timer;
-    QGraphicsSimpleTextItem *timeLabel;
+    bool isWin; //
+    QTimer *timer;  //
+    QGraphicsSimpleTextItem *timeLabel; //
     QString userName;
     int recordNum;
     bool hasClick;
     int lasti, lastj;
     int curi, curj;
     bool specialLink;
+    int sposi, sposj;
+    int newspecial[hnum][wnum];
+    int addvalue;
 
-    int checkend();
-    void gameover();
-//    void updateExist();
+    int checkend(); //
+    void gameover();    //
     void addScore();
     void startLinkAnimation();
     void startFallAnimation();
-    void insertRank();
-    void setRect();
+    void insertRank();  //
+//    void setRect();
     bool set3Link();
     bool checkL();
-    void doEffect();
+    void doEffect(bool recur_star = true);
     void Fall();
-    void reservedSquares();
-    void checkX(int x);
+    bool checkX(int x);
     bool dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType);
     bool setLink();
+    void setSpecial();
 };
 
 #endif // GAMESCENE_H

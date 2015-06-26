@@ -14,8 +14,8 @@ GameScene::GameScene(QObject *parent)
 
 
     /* set game background */
-    gameBG = new QGraphicsPixmapItem(QPixmap("")); //++
-    gameBG->setScale(0.731);
+    gameBG = new QGraphicsPixmapItem(QPixmap(":/images/images/gameBG.png")); //++
+    gameBG->setScale(1);
     gameBG->setZValue(-1);
     addItem(gameBG);
     setSceneRect(0,0,1000,650);
@@ -33,7 +33,6 @@ GameScene::GameScene(QObject *parent)
         {
             squares[i][j] = new Square();
             squares[i][j]->setScale(0.1);
-//            squares[i][j]->setcor(i, j);
             squares[i][j]->setPos(125+50*j,125+50*i);
             squaresRect[i][j].setRect(125+50*j, 125+50*i, 50, 50);
             addItem(squares[i][j]);
@@ -49,7 +48,6 @@ GameScene::GameScene(QObject *parent)
     /* Score */
     scoreLabel = new QGraphicsSimpleTextItem("Score:");
     scoreLabel->setPos(600, 35);
-//    scoreLabel->setBrush(QBrush(QColor(220, 70, 70)));
     scoreLabel->setBrush(QBrush(QColor(Qt::white)));
     QFont scoreLabelFont("URW Chancery L", 25);
     scoreLabelFont.setItalic(true);
@@ -58,7 +56,6 @@ GameScene::GameScene(QObject *parent)
     addItem(scoreLabel);
     score = new QGraphicsSimpleTextItem("0");
     score->setPos(700, 75);
-//    score->setBrush(QBrush(QColor(220, 70, 70)));
     score->setBrush(QBrush(QColor(Qt::white)));
     QFont scoreFont("URW Chancery L", 25);
     scoreFont.setItalic(true);
@@ -228,6 +225,12 @@ void GameScene::init()
     /* init special link */
     specialLink = false;
 
+    /* init new special array */
+    memset(newspecial, 0, sizeof(newspecial));
+
+    /* init addvalue */
+    addvalue = 0;
+
     /* test L check --*/
 //    squares[1][2]->setType(Square::FIRE);
 //    squares[1][3]->setType(Square::FIRE);
@@ -254,12 +257,12 @@ void GameScene::init()
 //    squares[2][3]->setType(Square::FIRE);
 
     /* test star */
-    squares[0][1]->setType(Square::FIRE);
-    squares[1][1]->setType(Square::FIRE);
-    squares[2][1]->setType(Square::WATER);
-    squares[2][2]->setType(Square::FIRE);
-    squares[3][1]->setType(Square::FIRE);
-    squares[4][1]->setType(Square::FIRE);
+//    squares[0][1]->setType(Square::FIRE);
+//    squares[1][1]->setType(Square::FIRE);
+//    squares[2][1]->setType(Square::WATER);
+//    squares[2][2]->setType(Square::FIRE);
+//    squares[3][1]->setType(Square::FIRE);
+//    squares[4][1]->setType(Square::FIRE);
 }
 
 void GameScene::resetIcon()
@@ -288,9 +291,13 @@ void GameScene::initsquares()
     }
 }
 
+void GameScene::setMode(GameScene::Mode mode)
+{
+    this->mode = mode;
+}
+
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
     if(backIconRect->contains(event->scenePos().toPoint()) && theEnd)
     {
         if(!Mainwindow::soundMute)
@@ -340,9 +347,11 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     exchangeGroup->addAnimation(squares[i][j]->getMoveAnimation());
                     exchangeGroup->addAnimation(squares[lasti][lastj]->getMoveAnimation());
 
-                    /* set bomb and star link */
-                    if(squares[curi][curj]->getType()==Square::BOMB || squares[curi][curj]->getType()==Square::STAR)
-                        islink[curi][curj] = true, specialLink = true;
+                    /* set special link */
+                    if(squares[curi][curj]->getType()==Square::STAR)
+                        islink[curi][curj]=true, specialLink=true, sposi=lasti, sposj=lastj;
+                    else if(squares[lasti][lastj]->getType()==Square::STAR)
+                        islink[lasti][lastj]=true, specialLink=true, sposi=curi, sposj=curj;
                 }
                 break;
             }
@@ -364,12 +373,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GameScene::keyPressEvent(QKeyEvent *event)
 {
-//    Fall();
-//    for(int i=0; i<hnum; i++)
-//        for(int j=0; j<wnum; j++)
-//            islink[i][j] = false;
-    for(int i=0; i<hnum; i++)
-        qDebug() << "i=" << i << " " << squares[i][1]->getType();
+
 }
 
 bool GameScene::set3Link()
@@ -381,9 +385,9 @@ bool GameScene::set3Link()
         {
             /* 3 squares in line */
             if(!(0>i-1 || i+1==hnum) && *squares[i][j]==*squares[i+1][j] && *squares[i][j]==*squares[i-1][j])
-                islink[i][j] = islink[i+1][j] = islink[i-1][j] = true, flag = true;
+                islink[i][j] = islink[i+1][j] = islink[i-1][j] = true, flag = true, addvalue+=3;
             if(!(0>j-1 || j+1==wnum) && *squares[i][j]==*squares[i][j+1] && *squares[i][j]==*squares[i][j-1])
-                islink[i][j] = islink[i][j+1] = islink[i][j-1] = true, flag = true;
+                islink[i][j] = islink[i][j+1] = islink[i][j-1] = true, flag = true, addvalue+=3;
         }
     return flag;
 }
@@ -396,6 +400,8 @@ bool GameScene::checkL()
     for(int i=0; i<hnum; i++)
         for(int j=0; j<wnum; j++)
         {
+            if(islink[i][j])
+                continue;   // avoid T
             QVector<QPair<int, int> > record[4];
             for(int k=0; k<4; k++)  // expand and track
             {
@@ -420,7 +426,11 @@ bool GameScene::checkL()
             /* set special squares */
             if(valid)
             {
-                squares[i][j]->setType(Square::BOMB), reservedlink[i][j] = true;
+                newspecial[i][j] = 3;   // 3 => bomb
+
+                /* add value */
+                for(int k=0; k<4; k++)
+                    addvalue += record[k].size()<<1;
 
                 /* set islink[] */
                 for(int k=0; k<4; k++)
@@ -434,7 +444,7 @@ bool GameScene::checkL()
     return flag;
 }
 
-void GameScene::doEffect()  // recursive effect
+void GameScene::doEffect(bool recur_star)  // recursive effect
 {
     bool flag = false;
     const int mi[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
@@ -447,19 +457,16 @@ void GameScene::doEffect()  // recursive effect
                 Square::Type type = squares[i][j]->getType();
                 switch(type)
                 {
-                case Square::BOMB:
-                    squares[i][j]->setEffect(Square::NO_EFFECT);
-                    for(int k=0; k<8; k++)
-                        if(0<=i+mi[k] && i+mi[k]<hnum && 0<=j+mj[k] && j+mj[k]<wnum)    // in range
-                            if(!islink[i+mi[k]][j+mj[k]])
-                                islink[i+mi[k]][j+mj[k]] = true, flag = true;   // check islink[] expand
-                    break;
                 case Square::STAR:
+                    if(!recur_star) // prevent being invoked by other effects
+                        break;
                     squares[i][j]->setEffect(Square::NO_EFFECT);
                     for(int a=0; a<hnum; a++)
                         for(int b=0; b<wnum; b++)
-                            if(*squares[lasti][lastj] == *squares[a][b])
-                                islink[a][b] = true;
+                            if(*squares[sposi][sposj] == *squares[a][b])
+                                islink[a][b] = true, addvalue+=2;
+                    break;
+                default:
                     break;
                 }
                 Square::Effect effect = squares[i][j]->getEffect();
@@ -469,20 +476,29 @@ void GameScene::doEffect()  // recursive effect
                     squares[i][j]->setEffect(Square::NO_EFFECT);
                     for(int k=0; k<hnum; k++)
                         if(!islink[k][j])
-                            islink[k][j] = true, flag = true;
+                            islink[k][j] = true, flag = true, addvalue+=2;
                     break;
                 case Square::HORIZON:
                     squares[i][j]->setEffect(Square::NO_EFFECT);
                     for(int k=0; k<wnum; k++)
                         if(!islink[i][k])
-                            islink[i][k] = true, flag = true;
+                            islink[i][k] = true, flag = true, addvalue+=2;
+                    break;
+                case Square::BOMB:
+                    squares[i][j]->setEffect(Square::NO_EFFECT);
+                    for(int k=0; k<8; k++)
+                        if(0<=i+mi[k] && i+mi[k]<hnum && 0<=j+mj[k] && j+mj[k]<wnum)    // in range
+                            if(!islink[i+mi[k]][j+mj[k]])
+                                islink[i+mi[k]][j+mj[k]] = true, flag = true, addvalue+=2;   // check islink[] expand
+                    break;
+                default:
                     break;
                 }
 
             }
         }
     if(flag)    // call recursive
-        doEffect();
+        doEffect(false);
 }
 
 void GameScene::Fall()
@@ -527,25 +543,20 @@ void GameScene::Fall()
     fallSquenceGroup->start();
 }
 
-/* recover special position */
-void GameScene::reservedSquares()
-{
-    for(int i=0; i<hnum; i++)
-        for(int j=0; j<wnum; j++)
-            if(reservedlink[i][j])
-                islink[i][j] = false;
-}
-
 /* check x squares in a line and set islink[] */
-void GameScene::checkX(int x)
+bool GameScene::checkX(int x)
 {
+    bool flag = false;
     for(int i=0; i<hnum; i++)
         for(int j=0; j<wnum; j++)
             if(!islink[i][j])
             {
-                dfs(i, j, x, 0, 1, squares[i][j]->getType());   // horizon
-                dfs(i, j, x, 0, 2, squares[i][j]->getType());   // vertical
+                if(dfs(i, j, x, 0, 1, squares[i][j]->getType()))   // horizon
+                    flag = true;
+                if(dfs(i, j, x, 0, 2, squares[i][j]->getType()))   // vertical
+                    flag = true;
             }
+    return flag;
 }
 
 /* called by checkX to set reservedlink[] and assign new special squares */
@@ -555,7 +566,10 @@ bool GameScene::dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType
     {
         if(cnt>=x)
         {
-            islink[i][j] = true;
+            if(x==5)
+                addvalue += cnt<<2; // one square for 4 points
+            else if(x==4)
+                addvalue += cnt<<1; // one square for 2 points
             return true;
         }
         else
@@ -570,10 +584,9 @@ bool GameScene::dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType
             if(cnt==0)
             {
                 if(x == 4)
-                    squares[i][j]->setEffect(Square::HORIZON);
+                    newspecial[i][j] = 1;   // horizon
                 else if(x == 5)
-                    squares[i][j]->setType(Square::STAR);
-                reservedlink[i][j] = true;
+                    newspecial[i][j] = 4;   // star
             }
             return true;
         }
@@ -588,10 +601,9 @@ bool GameScene::dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType
             if(cnt==0)
             {
                 if(x == 4)
-                    squares[i][j]->setEffect(Square::VERTICAL);
+                    newspecial[i][j] = 2;   // vertical
                 else if(x == 5)
-                    squares[i][j]->setType(Square::STAR);
-                reservedlink[i][j] = true;
+                    newspecial[i][j] = 4;   // star
             }
             return true;
         }
@@ -603,27 +615,22 @@ bool GameScene::dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType
 bool GameScene::setLink()
 {
     bool flag = false;
-    /* reset reservedlink before a move */
-    for(int i=0; i<hnum; i++)
-        for(int j=0; j<wnum; j++)
-            reservedlink[i][j] = false;
 
     /* check 5 squares in line, and create special squares */
-    checkX(5);  // check and set reservedlink
+    if(checkX(5))  // check and set reservedlink
+        flag = true;
 
     /* check L link */
     if(checkL())
         flag = true;
 
     /* check 4 squares in line */
-    checkX(4);
+    if(checkX(4))
+        flag = true;
 
     /* set 3 squares in line */
     if(set3Link())
         flag = true;
-
-    /* provent new special squares from disappeared */
-    reservedSquares();
 
     /* effect chain */
     doEffect();
@@ -645,7 +652,8 @@ void GameScene::gameover()
 
 void GameScene::addScore()
 {
-
+    int newScore = score->text().toInt()+addvalue;
+    score->setText(QString::number(newScore));
 }
 
 void GameScene::startLinkAnimation()
@@ -667,8 +675,42 @@ void GameScene::insertRank()
 
 void GameScene::endDisappearAnimation()
 {
+    /* addvalue */
+    addScore();
+    addvalue = 0;
+
     linkgroup->clear();
+    setSpecial();
     Fall();
+}
+
+/* set special squares according to newspecial[] and clear newspecial array */
+void GameScene::setSpecial()
+{
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+            if(newspecial[i][j])
+            {
+                switch (newspecial[i][j])
+                {
+                case 1:
+                    squares[i][j]->setEffect(Square::HORIZON);
+                    break;
+                case 2:
+                    squares[i][j]->setEffect(Square::VERTICAL);
+                    break;
+                case 3:
+                    squares[i][j]->setEffect(Square::BOMB);
+                    break;
+                case 4:
+                    squares[i][j]->setType(Square::STAR);
+                default:
+                    break;
+                }
+                islink[i][j] = false;   // preserved position duing fall
+            }
+    /* clear after set */
+    memset(newspecial, 0, sizeof(newspecial));
 }
 
 void GameScene::endFallAnimation()
