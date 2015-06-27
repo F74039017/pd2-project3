@@ -13,7 +13,8 @@
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
 #include <QPropertyAnimation>
-#include "Icon.h"
+#include "IconAgain.h"
+#include "IconBack.h"
 #include <QTimer>
 #include <QPair>
 #include <QVector>
@@ -29,15 +30,16 @@ class GameScene: public QGraphicsScene
 public:
     enum Mode{STEP, TIME};
     GameScene(QObject *parent=0);
+    ~GameScene();
     void initsquares();
     void setMode(GameScene::Mode mode);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void init();
-    void resetIcon();
 
 signals:
     void pressBack();
+    void quit(int star, int score);
 
 public slots:
     void endDisappearAnimation();
@@ -61,10 +63,10 @@ private:
     Square *squares[hnum][wnum];
     bool islink[hnum][wnum];
     QRect squaresRect[hnum][wnum];
-    bool theEnd;    //
+    bool theEnd;
     bool isAnimation;
-    Icon *backIcon;
-    Icon *againIcon;    // if win, "cont." instead
+    IconBack *backIcon;
+    IconAgain *againIcon;    // if win, "cont." instead
     QRect *againIconRect;
     QRect *backIconRect;
     QParallelAnimationGroup *linkgroup;
@@ -74,7 +76,6 @@ private:
     QParallelAnimationGroup *exchangeGroup;
     QParallelAnimationGroup *reexchangeGroup;
     bool isReExchange;
-    bool isWin; //
     QTimer *timer;
     QGraphicsSimpleTextItem *limitLabel;
     QString userName;
@@ -105,6 +106,7 @@ private:
     bool setLink();
     void setSpecial();
     void updateStar();
+    void polymorphismSetIconPixmap();
 };
 
 #endif // GAMESCENE_H

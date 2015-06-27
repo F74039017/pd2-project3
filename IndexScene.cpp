@@ -14,18 +14,30 @@ IndexScene::IndexScene(QObject *parent)
     setSceneRect(0,0,1000,650);
 
     /* start icon */
-    startIcon = new Icon(Icon::START);
+    startIcon = new IconStart(Icon::START);
     startIcon->setScale(0.3);
     startIcon->setPos(200, 400);
     addItem(startIcon);
     startIcon->setSoundFlag(true);
 
     /* rank icon */
-    rankIcon = new Icon(Icon::RANK);
+    rankIcon = new IconRank(Icon::RANK);
     rankIcon->setScale(0.3);
     rankIcon->setPos(650, 400);
     addItem(rankIcon);
     rankIcon->setSoundFlag(true);
+
+    /* add backIcon */
+    backIcon = new IconBack(Icon::BACK);
+    backIcon->setScale(0.23);
+    backIcon->setPos(550, 550);
+    backIcon->setZValue(2);
+    addItem(backIcon);
+    backIcon->hide();
+    backIcon->setSoundFlag(false);
+
+    /* set icons images */
+    polymorphismSetIconPixmap();
 
     /* rect init */
     int w, h;
@@ -46,15 +58,6 @@ IndexScene::IndexScene(QObject *parent)
     addItem(rankBG);
     rankBG->hide();
     rankon = false;
-
-    /* add backIcon */
-    backIcon = new Icon(Icon::BACK);
-    backIcon->setScale(0.23);
-    backIcon->setPos(550, 550);
-    backIcon->setZValue(2);
-    addItem(backIcon);
-    backIcon->hide();
-    backIcon->setSoundFlag(false);
 
     /* init rank id */
     QFont rankFont("URW Chancery L", 25);
@@ -104,6 +107,22 @@ IndexScene::IndexScene(QObject *parent)
 
 }
 
+IndexScene::~IndexScene()
+{
+    delete indexBG;
+    delete rankBG;
+    delete startIcon;
+    delete backIcon;
+    delete rankIcon;
+    delete startIconRect;
+    delete rankIconRect;
+    delete backIconRect;
+    delete[] rankName;
+    delete[] rankScore;
+    delete[] rankID;
+    delete bestScore;
+}
+
 void IndexScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(startIconRect->contains(event->scenePos().toPoint()) && !rankon)
@@ -128,8 +147,8 @@ void IndexScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void IndexScene::resetIcon()    // recover unpressed state when scene change
 {
-    startIcon->setImage(startIcon->getType());
-    backIcon->setImage(backIcon->getType());
+    startIcon->setImage();
+    backIcon->setImage();
 }
 
 void IndexScene::showRank() // start pos bug
@@ -195,5 +214,15 @@ void IndexScene::updateRank()
                 bestScore->setText("Your Best:  0");
             else
                 bestScore->setText(QString("Your Best:  %1").arg(qry.value(0).toString()));
-        }
+    }
+}
+
+void IndexScene::polymorphismSetIconPixmap()
+{
+    Icon *icons[3];
+    icons[0] = startIcon;
+    icons[1] = rankIcon;
+    icons[2] = backIcon;
+    for(int i=0; i<3; i++)
+        icons[i]->setImage();
 }

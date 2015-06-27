@@ -38,13 +38,6 @@ GameScene::GameScene(QObject *parent)
             addItem(squares[i][j]);
         }
 
-
-    /* add title */
-//    title = new QGraphicsPixmapItem(QPixmap(":/images/images/2048_title_in.png"));
-//    title->setPos(100, -10);
-//    title->setScale(0.35);
-//    addItem(title);
-
     /* Score */
     scoreLabel = new QGraphicsSimpleTextItem("Score:");
     scoreLabel->setPos(650, 35);
@@ -112,17 +105,20 @@ GameScene::GameScene(QObject *parent)
     addItem(bestScore);
 
     /* again icon */
-    againIcon = new Icon(Icon::AGAIN);
+    againIcon = new IconAgain(Icon::AGAIN);
     againIcon->setScale(0.28);
     againIcon->setPos(625, 480);
     addItem(againIcon);
     againIcon->hide();
 
     /* back icon */
-    backIcon = new Icon(Icon::BACK);
+    backIcon = new IconBack(Icon::BACK);
     backIcon->setScale(0.28);
     backIcon->setPos(200, 480);
     addItem(backIcon);
+
+    /* set image */
+    polymorphismSetIconPixmap();
 
     /* rect init */
     int w, h;
@@ -169,6 +165,35 @@ GameScene::GameScene(QObject *parent)
 
 }
 
+GameScene::~GameScene()
+{
+    delete gameBG;
+    delete title;
+    delete scoreLabel;
+    delete score;
+    delete gameoverBG;
+    delete gameoverLabel;
+    delete gameoverScoreLabel;
+    delete gameoverScore;
+    delete bestScoreLabel;
+    delete bestScore;
+    delete[] squares;
+    delete backIcon;
+    delete againIcon;
+    delete againIconRect;
+    delete backIconRect;
+    delete linkgroup;
+    delete fallgroup;
+    delete fallgroup2;
+    delete fallSquenceGroup;
+    delete exchangeGroup;
+    delete reexchangeGroup;
+    delete timer;
+    delete limitLabel;
+    delete[] star;
+    delete[] finalstar;
+}
+
 void GameScene::init()
 {
     if(isAnimation)
@@ -197,9 +222,8 @@ void GameScene::init()
             squares[i][j]->setRecoverPoint();
 
     /* init gameover */
-    resetIcon();
+    polymorphismSetIconPixmap();
     theEnd = false;
-//    isWin = false;
     gameoverBG->hide();
     gameoverBG->setZValue(1);
     gameoverLabel->hide();
@@ -241,7 +265,7 @@ void GameScene::init()
     /* init limitLabel */
     if(mode==STEP)
     {
-        limitLabel->setText("2");
+        limitLabel->setText("10");
         timer->stop();
     }
     else if(mode==TIME)
@@ -263,45 +287,6 @@ void GameScene::init()
     starNum = 0;
     for(int i=0; i<3; i++)
         star[i]->hide(), finalstar[i]->hide();
-
-    /* test L check --*/
-//    squares[1][2]->setType(Square::FIRE);
-//    squares[1][3]->setType(Square::FIRE);
-//    squares[2][1]->setType(Square::FIRE);
-//    squares[3][1]->setType(Square::FIRE);
-//    squares[1][1]->setType(Square::WATER);
-//    squares[1][0]->setType(Square::FIRE);
-
-    /* test 4 in line */
-//    squares[0][1]->setType(Square::FIRE);
-//    squares[1][1]->setType(Square::FIRE);
-//    squares[2][1]->setType(Square::FIRE);
-//    squares[4][1]->setType(Square::FIRE);
-//    squares[3][1]->setType(Square::WATER);
-//    squares[3][2]->setType(Square::FIRE);
-//    squares[5][1]->setType(Square::FIRE);
-
-    /* test L */
-//    squares[0][1]->setType(Square::FIRE);
-//    squares[1][1]->setType(Square::FIRE);
-//    squares[2][1]->setType(Square::WATER);
-//    squares[3][1]->setType(Square::FIRE);
-//    squares[2][2]->setType(Square::FIRE);
-//    squares[2][3]->setType(Square::FIRE);
-
-    /* test star */
-//    squares[0][1]->setType(Square::FIRE);
-//    squares[1][1]->setType(Square::FIRE);
-//    squares[2][1]->setType(Square::WATER);
-//    squares[2][2]->setType(Square::FIRE);
-//    squares[3][1]->setType(Square::FIRE);
-//    squares[4][1]->setType(Square::FIRE);
-}
-
-void GameScene::resetIcon()
-{
-    backIcon->setImage(backIcon->getType());
-    againIcon->setImage(againIcon->getType());
 }
 
 void GameScene::initsquares()
@@ -691,9 +676,11 @@ void GameScene::gameover()
     if(mode == GameScene::TIME)
         timer->stop();
 
+    /* pass last record to view class */
+    emit quit(starNum, score->text().toInt());
+
     /* insert user and score to database */
     insertRank();
-    qDebug() << "is gameover";  //  test
 
     gameoverScore->setText(score->text());
     QSqlQuery qry;
@@ -815,6 +802,15 @@ void GameScene::updateStar()
     /* show star */
     for(int i=0; i<starNum; i++)
         star[i]->show();
+}
+
+void GameScene::polymorphismSetIconPixmap()
+{
+    Icon *icons[2];
+    icons[0] = againIcon;
+    icons[1] = backIcon;
+    for(int i=0; i<2; i++)
+        icons[i]->setImage();
 }
 
 void GameScene::endFallAnimation()

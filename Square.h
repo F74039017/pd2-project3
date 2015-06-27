@@ -17,15 +17,11 @@ public:
     enum Effect{VERTICAL, HORIZON, BOMB, NO_EFFECT};
     static const int typenum = 4;
     Square(QGraphicsItem * parent = 0);
+    ~Square();
     void setType(Type value);
     Type getType();
     void setEffect(Effect value);
     Effect getEffect();
-//    void setExist(bool flag);
-//    bool isExist();
-//    void setcor(int x, int y);
-//    int getX();
-//    int getY();
     QPropertyAnimation *getMoveAnimation();
     QPropertyAnimation *getDisappearAnimation();
     void setMoveStart(QPointF s);
@@ -41,9 +37,6 @@ public:
 private:
     Type type;
     Effect effect;
-//    bool exist;
-//    int ix;
-//    int iy;
     QPointF recoverPoint;
     QPropertyAnimation *move;
     QPropertyAnimation *disappear;

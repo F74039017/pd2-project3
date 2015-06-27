@@ -1,12 +1,12 @@
 #include "Mainwindow.h"
 #include <QInputDialog>
 
-bool Mainwindow::soundMute = true;  //-- true for test
-bool Mainwindow::musicMute = true;
+bool Mainwindow::soundMute = false;  //-- true for test
+bool Mainwindow::musicMute = false;
 
 Mainwindow::Mainwindow()
 {
-    setWindowTitle("2048");
+    setWindowTitle("Project3");
 
     /* add game window */
     game = new Game(this);
@@ -28,6 +28,18 @@ Mainwindow::Mainwindow()
     QObject::connect(musicMuteAct, SIGNAL(triggered()), game, SLOT(muteMusic()));
     soundMuteAct = new QAction("&Sound", this);
     QObject::connect(soundMuteAct, SIGNAL(triggered()), this, SLOT(muteSound()));
+        /* Info */
+    mapper = new QSignalMapper(this);
+    lastrecordAct = new QAction("&lastrecordAct", this);
+    rule_enAct = new QAction("&rule_enAct", this);
+    rule_zhAct = new QAction("&rule_zhAct", this);
+    QObject::connect(lastrecordAct, SIGNAL(triggered()), mapper, SLOT(map()));
+    QObject::connect(rule_enAct, SIGNAL(triggered()), mapper, SLOT(map()));
+    QObject::connect(rule_zhAct,SIGNAL(triggered()), mapper, SLOT(map()));
+    mapper->setMapping(lastrecordAct, 1);
+    mapper->setMapping(rule_enAct, 2);
+    mapper->setMapping(rule_zhAct, 3);
+    QObject::connect(mapper, SIGNAL(mapped(int)), this, SLOT(showRule(int)));
 
 
     /* create menu */
@@ -46,8 +58,38 @@ Mainwindow::Mainwindow()
     muteMenu = menuBar()->addMenu("&Mute");
     muteMenu->addAction(musicMuteAct);
     muteMenu->addAction(soundMuteAct);
+        /* Info */
+    infoMenu = menuBar()->addMenu("&Info");
+    infoMenu->addAction(lastrecordAct);
+    infoMenu->addAction(rule_enAct);
+    infoMenu->addAction(rule_zhAct);
+
+    /* rule dialog */
+    ruleDia = new QMessageBox();
+    ruleDia->setModal(false);   // unblock
 
     setFixedSize(sizeHint());   // disable to resize from drag border
+}
+
+Mainwindow::~Mainwindow()
+{
+    emit quit(Game::getlastStarNum(), Game::getlastScore());
+    delete optionMenu;
+    delete modeMenu;
+    delete muteMenu;
+    delete infoMenu;
+    delete restartAct;
+    delete giveupAct;
+    delete stepAct;
+    delete timeAct;
+    delete soundMuteAct;
+    delete musicMuteAct;
+    delete lastrecordAct;
+    delete rule_enAct;
+    delete rule_zhAct;
+    delete ruleDia;
+    delete mapper;
+    delete game;
 }
 
 void Mainwindow::startGame()
@@ -78,5 +120,30 @@ void Mainwindow::menuDisable()
 void Mainwindow::muteSound()
 {
     soundMute = !soundMute;
+}
+
+void Mainwindow::showRule(int x)
+{
+    if(x==1)
+    {
+        ruleDia->setText("Last Record");
+        int score = game->getlastScore();
+        int star = game->getlastStarNum();
+        if(star||score)
+            ruleDia->setInformativeText(QString("User: %1 \nScore: %2 \nStar: %3").arg(game->getuserName(), QString::number(score), QString::number(star)));
+        else
+            ruleDia->setInformativeText("No last record");
+    }
+    else if(x==2)
+    {
+        ruleDia->setText("Rule");
+        ruleDia->setInformativeText("Step Mode:\nGet scores in 10 steps\n\nTime Mode:\nGet scores in 50 seconds\n\nStar:\n0~500\t  1 Star\n500~1000\t  2 Stars\n1000~1500\t  3 Stars");
+    }
+    else if(x==3)
+    {
+        ruleDia->setText("規則");
+        ruleDia->setInformativeText("步數模式:\n在10步之內取得分數\n\n限時模式:\n在50秒內取得分數\n\n星星數:\n0~500\t  1 星\n500~1000\t  2 星\n1000~1500\t  3 星");
+    }
+    ruleDia->show();
 }
 

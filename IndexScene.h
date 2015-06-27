@@ -3,7 +3,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSimpleTextItem>
-#include "Icon.h"
+#include "IconStart.h"
+#include "IconRank.h"
+#include "IconBack.h"
 #include <QtSql>
 
 class IndexScene: public QGraphicsScene
@@ -12,6 +14,7 @@ class IndexScene: public QGraphicsScene
 
 public:
     IndexScene(QObject *parent=0);
+    ~IndexScene();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void resetIcon();
 
@@ -21,9 +24,9 @@ signals:
 private:
     QGraphicsPixmapItem *indexBG;
     QGraphicsPixmapItem *rankBG;
-    Icon *startIcon;
-    Icon *rankIcon;
-    Icon *backIcon;
+    IconStart *startIcon;
+    IconRank *rankIcon;
+    IconBack *backIcon;
     QRect *startIconRect;
     QRect *rankIconRect;
     QRect *backIconRect;
@@ -37,6 +40,7 @@ private:
     void showRank();
     void hideRank();
     void updateRank();
+    void polymorphismSetIconPixmap();
 };
 
 #endif // INDEXSCENE_H

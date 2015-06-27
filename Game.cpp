@@ -3,6 +3,9 @@
 #define tbName "rank"
 #include "Mainwindow.h"
 
+int Game::lastScore = 0;
+int Game::lastStarNum = 0;
+
 Game::Game(QWidget * parent)
     :QGraphicsView(parent)
 {
@@ -41,6 +44,16 @@ Game::Game(QWidget * parent)
         qry.exec(QString("CREATE TABLE %1 (id INT PRIMARY KEY, name TEXT, score INT)").arg(tbName));
     }
 
+    /* get last record from gamescene */
+    QObject::connect(gameScene, SIGNAL(quit(int,int)), this, SLOT(setLastRecord(int,int)));
+}
+
+Game::~Game()
+{
+    delete gameScene;
+    delete indexScene;
+    delete bgm;
+    delete playList;
 }
 
 void Game::init()
@@ -56,6 +69,23 @@ void Game::setUserName(QString name)
 QString Game::getuserName()
 {
     return userName;
+}
+
+int Game::getlastScore()
+{
+    return lastScore;
+}
+
+int Game::getlastStarNum()
+{
+    return lastStarNum;
+}
+
+void Game::setLastRecord(int star, int score)
+{
+//    qDebug() << "Game Class get last record from gamescene: " << star << " " << score;    // demo
+    lastStarNum = star;
+    lastScore = score;
 }
 
 void Game::restart()

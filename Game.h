@@ -13,13 +13,19 @@ class Game: public QGraphicsView{
 
 public:
     Game(QWidget * parent = 0);
+    ~Game();
     void init();    // restart
     void setUserName(QString name);
     QString getuserName();
+    static int getlastScore();
+    static int getlastStarNum();
 
 signals:
     void toGame();
     void toIndex();
+
+public slots:
+    void setLastRecord(int star, int score);
 
 public slots:
     void restart();
@@ -36,7 +42,8 @@ private:
     QString userName;
     QMediaPlayer *bgm;
     QMediaPlaylist *playList;
-
+    static int lastScore;
+    static int lastStarNum;
 };
 
 #endif // GAME

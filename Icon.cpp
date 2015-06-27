@@ -1,14 +1,10 @@
 #include "Icon.h"
 #include <QDebug>
-#include "Mainwindow.h"
 
 Icon::Icon(Icon::Type type, QGraphicsItem * parent)
     :QGraphicsPixmapItem(parent)
 {
-    setPixmap(QPixmap(":/images/images/rank_icon.png"));
-    setAcceptHoverEvents(true);
     this->type = type;
-    setImage(type);
 
     /* enter icon sound */
     inSound = new QSoundEffect();
@@ -21,54 +17,15 @@ Icon::Icon(Icon::Type type, QGraphicsItem * parent)
     clickSound->setSource(QUrl("qrc:/sounds/sounds/icon_click.wav"));
 }
 
-void Icon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
+Icon::~Icon()
 {
-    if(inSoundFlag && !Mainwindow::soundMute)
-        inSound->play();
-
-    switch(type)
-    {
-        case START:
-            setPixmap(QPixmap(":/images/images/start_icon_pressed.png"));
-            break;
-        case RANK:
-            setPixmap(QPixmap(":/images/images/rank_icon_pressed.png"));
-            break;
-        case BACK:
-            setPixmap(QPixmap(":/images/images/back_icon_pressed.png"));
-            break;
-        case AGAIN:
-            setPixmap(QPixmap(":/images/images/again_icon_pressed.png"));
-            break;
-        case CONT:
-            setPixmap(QPixmap(":/images/images/cont_icon_pressed.png"));
-    }
+    delete inSound;
+    delete clickSound;
 }
 
-void Icon::hoverLeaveEvent(QGraphicsSceneHoverEvent *) // reset unpressed icon
+void Icon::setImage()
 {
-    setImage(type);
-}
-
-void Icon::setImage(Icon::Type type)
-{
-    switch(type)
-    {
-        case START:
-            setPixmap(QPixmap(":/images/images/start_icon.png"));
-            break;
-        case RANK:
-            setPixmap(QPixmap(":/images/images/rank_icon.png"));
-            break;
-        case BACK:
-            setPixmap(QPixmap(":/images/images/back_icon.png"));
-            break;
-        case AGAIN:
-            setPixmap(QPixmap(":/images/images/again_icon.png"));
-            break;
-        case CONT:
-            setPixmap(QPixmap(":/images/images/cont_icon.png"));
-    }
+    qDebug() << "call base";
 }
 
 Icon::Type Icon::getType()
@@ -84,12 +41,6 @@ void Icon::playClickSound()
 void Icon::setSoundFlag(bool flag)
 {
     this->inSoundFlag = flag;
-}
-
-void Icon::setType(Icon::Type type)
-{
-    this->type = type;
-    setImage(type);
 }
 
 

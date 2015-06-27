@@ -8,6 +8,11 @@ Square::Square(QGraphicsItem * parent)
     init();
 }
 
+Square::~Square()
+{
+
+}
+
 void Square::setType(Type x)
 {
     type = x;
@@ -30,36 +35,6 @@ Square::Effect Square::getEffect()
     return effect;
 }
 
-//void Square::setExist(bool flag)
-//{
-//    exist = flag;
-//    if(!flag)
-//        hide();
-//    else
-//        show();
-//}
-
-//bool Square::isExist()
-//{
-//    return exist;
-//}
-
-//void Square::setcor(int x, int y)
-//{
-//    this->ix = x;
-//    this->iy = y;
-//}
-
-//int Square::getX()
-//{
-//    return ix;
-//}
-
-//int Square::getY()
-//{
-//    return iy;
-//}
-
 QPropertyAnimation *Square::getMoveAnimation()
 {
     return move;
@@ -73,7 +48,7 @@ QPropertyAnimation *Square::getDisappearAnimation()
 void Square::setMoveStart(QPointF s)
 {
     move = new QPropertyAnimation(this, "pos", this);
-    move->setDuration(AnimationSpeed);  // 50 is moderate
+    move->setDuration(AnimationSpeed);
     move->setStartValue(s);
     move->setEndValue(recoverPoint);
 }
@@ -110,7 +85,7 @@ bool Square::operator!=(const Square &x)
     return !(*this == x);
 }
 
-const Square &Square::operator=(const Square &x)    // only change type, need call updatePixmap();
+const Square &Square::operator=(const Square &x)
 {
     this->type = x.type;
     this->effect = x.effect;

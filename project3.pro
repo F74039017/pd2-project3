@@ -18,7 +18,11 @@ SOURCES += main.cpp \
     Square.cpp \
     GameScene.cpp \
     IndexScene.cpp \
-    Icon.cpp
+    Icon.cpp \
+    IconStart.cpp \
+    IconRank.cpp \
+    IconAgain.cpp \
+    IconBack.cpp
 
 HEADERS  += \
     Mainwindow.h \
@@ -26,7 +30,11 @@ HEADERS  += \
     Square.h \
     GameScene.h \
     IndexScene.h \
-    Icon.h
+    Icon.h \
+    IconStart.h \
+    IconRank.h \
+    IconAgain.h \
+    IconBack.h
 
 FORMS    +=
 

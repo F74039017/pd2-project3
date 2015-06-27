@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/images">
-        <file>images/2048_title_in.png</file>
         <file>images/again_icon.png</file>
         <file>images/again_icon_pressed.png</file>
         <file>images/back_icon.png</file>
@@ -10,8 +9,6 @@
         <file>images/rank_icon_pressed.png</file>
         <file>images/start_icon.png</file>
         <file>images/start_icon_pressed.png</file>
-        <file>images/cont_icon.png</file>
-        <file>images/cont_icon_pressed.png</file>
         <file>images/WaterSquareV.png</file>
         <file>images/WaterSquareH.png</file>
         <file>images/WaterSquareB.png</file>
