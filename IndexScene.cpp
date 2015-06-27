@@ -117,9 +117,13 @@ IndexScene::~IndexScene()
     delete startIconRect;
     delete rankIconRect;
     delete backIconRect;
-    delete[] rankName;
-    delete[] rankScore;
-    delete[] rankID;
+    for(int i=0; i<10; i++)
+    {
+        delete rankName[i];
+        delete rankScore[i];
+        delete rankID[i];
+    }
+
     delete bestScore;
 }
 

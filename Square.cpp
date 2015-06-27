@@ -104,7 +104,6 @@ void Square::randCreate()
 
 void Square::init()
 {
-//    exist = false;
     type = FIRE;
     effect = NO_EFFECT;
 }

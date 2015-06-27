@@ -66,7 +66,7 @@ private:
     bool theEnd;
     bool isAnimation;
     IconBack *backIcon;
-    IconAgain *againIcon;    // if win, "cont." instead
+    IconAgain *againIcon;
     QRect *againIconRect;
     QRect *backIconRect;
     QParallelAnimationGroup *linkgroup;

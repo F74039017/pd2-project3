@@ -28,6 +28,7 @@
         <file>images/FireSquareH.png</file>
         <file>images/FireSquareB.png</file>
         <file>images/FireSquare.png</file>
+        <file>images/star.png</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>sounds/icon_in.wav</file>

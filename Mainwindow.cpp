@@ -4,7 +4,8 @@
 bool Mainwindow::soundMute = false;  //-- true for test
 bool Mainwindow::musicMute = false;
 
-Mainwindow::Mainwindow()
+Mainwindow::Mainwindow(QWidget *parent, Qt::WindowFlags flags)
+    :QMainWindow(parent, flags)
 {
     setWindowTitle("Project3");
 
@@ -69,6 +70,8 @@ Mainwindow::Mainwindow()
     ruleDia->setModal(false);   // unblock
 
     setFixedSize(sizeHint());   // disable to resize from drag border
+
+    setWindowIcon(QIcon(":/images/images/star.png"));
 }
 
 Mainwindow::~Mainwindow()
@@ -100,11 +103,18 @@ void Mainwindow::startGame()
 void Mainwindow::askUserName()  // input dialog
 {
     bool ok;
-    QString text = QInputDialog::getText(this, "Your name?", "User name:", QLineEdit::Normal, "Anonymous", &ok);
+    QInputDialog dia;
+    dia.setModal(false);
+    QString text = dia.getText(this, "Your name?", "User name:", QLineEdit::Normal, "Anonymous", &ok);
     if(!ok)
         game->setUserName("Anonymous");
     else
         game->setUserName(text);
+}
+
+void Mainwindow::closeEvent(QCloseEvent *)
+{
+    emit quit(Game::getlastStarNum(), Game::getlastScore());
 }
 
 void Mainwindow::menuEnable()

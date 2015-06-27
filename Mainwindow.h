@@ -12,12 +12,13 @@ class Mainwindow: public QMainWindow
     Q_OBJECT
 
 public:
-    Mainwindow();
+    Mainwindow(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     ~Mainwindow();
     void startGame();
     void askUserName();
     static bool soundMute;
     static bool musicMute;
+    void closeEvent(QCloseEvent *);
 
 signals:
     void quit(int star, int score);

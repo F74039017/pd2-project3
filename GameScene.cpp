@@ -14,7 +14,7 @@ GameScene::GameScene(QObject *parent)
 
 
     /* set game background */
-    gameBG = new QGraphicsPixmapItem(QPixmap(":/images/images/gameBG.png")); //++
+    gameBG = new QGraphicsPixmapItem(QPixmap(":/images/images/gameBG.png"));
     gameBG->setScale(1);
     gameBG->setZValue(-1);
     addItem(gameBG);
@@ -146,12 +146,12 @@ GameScene::GameScene(QObject *parent)
     /* create stars */
     for(int i=0; i<3; i++)
     {
-        star[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/StarSquare.png"));   // test pic
+        star[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/star.png"));   // test pic
         star[i]->setScale(0.125);
         star[i]->setPos(i*80+150, 50);
         addItem(star[i]);
 
-        finalstar[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/StarSquare.png"));   // test pic
+        finalstar[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/star.png"));   // test pic
         finalstar[i]->setZValue(1);
         finalstar[i]->setScale(0.125);
         finalstar[i]->setPos(350+i*100, 400);
@@ -177,7 +177,6 @@ GameScene::~GameScene()
     delete gameoverScore;
     delete bestScoreLabel;
     delete bestScore;
-    delete[] squares;
     delete backIcon;
     delete againIcon;
     delete againIconRect;
@@ -190,8 +189,15 @@ GameScene::~GameScene()
     delete reexchangeGroup;
     delete timer;
     delete limitLabel;
-    delete[] star;
-    delete[] finalstar;
+    for(int i=0; i<hnum; i++)
+        for(int j=0; j<wnum; j++)
+            delete squares[i][j];
+    for(int i=0; i<3; i++)
+    {
+        delete star[i];
+        delete finalstar[i];
+    }
+
 }
 
 void GameScene::init()
@@ -329,7 +335,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         emit pressBack();
     }
 
-    if(isAnimation)
+    if(isAnimation || theEnd)
         return;
 
     exchangeGroup->clear();
