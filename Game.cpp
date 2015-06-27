@@ -85,3 +85,15 @@ void Game::muteMusic()
     else
         bgm->play();
 }
+
+void Game::setStepMode()
+{
+    gameScene->setMode(GameScene::STEP);
+    gameScene->init();
+}
+
+void Game::setTimeMode()
+{
+    gameScene->setMode(GameScene::TIME);
+    gameScene->init();
+}

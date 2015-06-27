@@ -13,6 +13,11 @@ Mainwindow::Mainwindow()
     setCentralWidget(game);
 
     /* create action */
+        /* Mode */
+    stepAct = new QAction("&Step", this);
+    QObject::connect(stepAct, SIGNAL(triggered()), game, SLOT(setStepMode()));
+    timeAct = new QAction("&Time", this);
+    QObject::connect(timeAct, SIGNAL(triggered()), game, SLOT(setTimeMode()));
         /* Option */
     restartAct = new QAction("&Restart", this);
     QObject::connect(restartAct, SIGNAL(triggered()), game, SLOT(restart()));
@@ -26,6 +31,10 @@ Mainwindow::Mainwindow()
 
 
     /* create menu */
+        /* Mode */
+    modeMenu = menuBar()->addMenu("&Mode");
+    modeMenu->addAction(stepAct);
+    modeMenu->addAction(timeAct);
         /* Option */
     optionMenu = menuBar()->addMenu("&Option");
     optionMenu->addAction(restartAct);

@@ -44,7 +44,7 @@ public slots:
     void endFallAnimation();
     void reshow();
     void endExchangeAnimation();
-//    void countDown();
+    void countDown();
 
 private:
     GameScene::Mode mode;
@@ -75,8 +75,8 @@ private:
     QParallelAnimationGroup *reexchangeGroup;
     bool isReExchange;
     bool isWin; //
-    QTimer *timer;  //
-    QGraphicsSimpleTextItem *timeLabel; //
+    QTimer *timer;
+    QGraphicsSimpleTextItem *limitLabel;
     QString userName;
     int recordNum;
     bool hasClick;
@@ -86,14 +86,16 @@ private:
     int sposi, sposj;
     int newspecial[hnum][wnum];
     int addvalue;
+    QGraphicsPixmapItem *star[3];
+    QGraphicsPixmapItem *finalstar[3];
+    int starNum;
 
-    int checkend(); //
-    void gameover();    //
+    bool checkend();
+    void gameover();
     void addScore();
     void startLinkAnimation();
     void startFallAnimation();
-    void insertRank();  //
-//    void setRect();
+    void insertRank();
     bool set3Link();
     bool checkL();
     void doEffect(bool recur_star = true);
@@ -102,6 +104,7 @@ private:
     bool dfs(int i, int j, int x, int cnt, int dir, Square::Type lastType);
     bool setLink();
     void setSpecial();
+    void updateStar();
 };
 
 #endif // GAMESCENE_H

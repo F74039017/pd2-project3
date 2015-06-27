@@ -40,14 +40,14 @@ GameScene::GameScene(QObject *parent)
 
 
     /* add title */
-    title = new QGraphicsPixmapItem(QPixmap(":/images/images/2048_title_in.png"));
-    title->setPos(100, -10);
-    title->setScale(0.35);
-    addItem(title);
+//    title = new QGraphicsPixmapItem(QPixmap(":/images/images/2048_title_in.png"));
+//    title->setPos(100, -10);
+//    title->setScale(0.35);
+//    addItem(title);
 
     /* Score */
     scoreLabel = new QGraphicsSimpleTextItem("Score:");
-    scoreLabel->setPos(600, 35);
+    scoreLabel->setPos(650, 35);
     scoreLabel->setBrush(QBrush(QColor(Qt::white)));
     QFont scoreLabelFont("URW Chancery L", 25);
     scoreLabelFont.setItalic(true);
@@ -55,7 +55,7 @@ GameScene::GameScene(QObject *parent)
     scoreLabel->setFont(scoreLabelFont);
     addItem(scoreLabel);
     score = new QGraphicsSimpleTextItem("0");
-    score->setPos(700, 75);
+    score->setPos(750, 75);
     score->setBrush(QBrush(QColor(Qt::white)));
     QFont scoreFont("URW Chancery L", 25);
     scoreFont.setItalic(true);
@@ -63,13 +63,13 @@ GameScene::GameScene(QObject *parent)
     addItem(score);
 
     /* GameOver */
-    gameoverBG = new QGraphicsRectItem(0, 0, 500, 650);
+    gameoverBG = new QGraphicsRectItem(0, 0, 1000, 650);
     gameoverBG->setBrush(QBrush(QColor(128, 128, 128)));
     gameoverBG->setOpacity(0.85);
     gameoverBG->setPen(Qt::NoPen);
     addItem(gameoverBG);
     gameoverLabel = new QGraphicsSimpleTextItem("Game Over");
-    gameoverLabel->setPos(55, 80);
+    gameoverLabel->setPos(300, 80);
     gameoverLabel->setBrush(QColor(Qt::black));
     QPen gameoverPen(QColor(Qt::white));
     gameoverPen.setWidth(3);
@@ -83,7 +83,7 @@ GameScene::GameScene(QObject *parent)
 
     /* Gameover Score */
     gameoverScoreLabel = new QGraphicsSimpleTextItem("Your Score:");
-    gameoverScoreLabel->setPos(85, 250);
+    gameoverScoreLabel->setPos(85+250, 200);
     gameoverScoreLabel->setBrush(QColor(Qt::black));
     gameoverFont.setPointSize(32);
     gameoverFont.setBold(true);
@@ -93,19 +93,19 @@ GameScene::GameScene(QObject *parent)
     gameoverScoreLabel->setFont(gameoverFont);
     addItem(gameoverScoreLabel);
     bestScoreLabel = new QGraphicsSimpleTextItem("Your Best:");
-    bestScoreLabel->setPos(85, 350);
+    bestScoreLabel->setPos(85+250, 300);
     bestScoreLabel->setBrush(QColor(Qt::black));
     bestScoreLabel->setPen(gameoverPen);
     bestScoreLabel->setFont(gameoverFont);
     addItem(bestScoreLabel);
     gameoverScore = new QGraphicsSimpleTextItem("0");
-    gameoverScore->setPos(310, 250);
+    gameoverScore->setPos(310+250, 200);
     gameoverScore->setBrush(QColor(Qt::black));
     gameoverScore->setPen(gameoverPen);
     gameoverScore->setFont(gameoverFont);
     addItem(gameoverScore);
     bestScore = new QGraphicsSimpleTextItem("0");
-    bestScore->setPos(310, 350);
+    bestScore->setPos(310+250, 300);
     bestScore->setBrush(QColor(Qt::black));
     bestScore->setPen(gameoverPen);
     bestScore->setFont(gameoverFont);
@@ -114,38 +114,53 @@ GameScene::GameScene(QObject *parent)
     /* again icon */
     againIcon = new Icon(Icon::AGAIN);
     againIcon->setScale(0.28);
-    againIcon->setPos(40, 480);
+    againIcon->setPos(625, 480);
     addItem(againIcon);
     againIcon->hide();
 
     /* back icon */
     backIcon = new Icon(Icon::BACK);
     backIcon->setScale(0.28);
-    backIcon->setPos(300, 480);
+    backIcon->setPos(200, 480);
     addItem(backIcon);
 
     /* rect init */
     int w, h;
     w = againIcon->boundingRect().width()*0.28;
     h = againIcon->boundingRect().height()*0.28;
-    againIconRect = new QRect(40, 480, w, h);
-    backIconRect = new QRect(300, 480, w, h);
+    againIconRect = new QRect(625, 480, w, h);
+    backIconRect = new QRect(200, 480, w, h);
 
     /* init group */
     linkgroup = new QParallelAnimationGroup(this);
     fallSquenceGroup = new QSequentialAnimationGroup(this);
     exchangeGroup = new QParallelAnimationGroup(this);
 
-    /* time (survive) mdoe */
+    /* time mdoe */
     timer = new QTimer(this);
-    timeLabel = new QGraphicsSimpleTextItem("15");
-    timeLabel->setPos(400, 20);
-    timeLabel->setBrush(QBrush(QColor(Qt::yellow)));
-    QFont timeLabelFont("URW Chancery L", 25);
-    timeLabelFont.setItalic(true);
-    timeLabel->setFont(timeLabelFont);
-    addItem(timeLabel);
+    limitLabel = new QGraphicsSimpleTextItem("15");
+    limitLabel->setPos(475, 40);
+    limitLabel->setBrush(QBrush(QColor(Qt::yellow)));
+    QFont limitLabelFont("URW Chancery L", 40);
+    limitLabelFont.setItalic(true);
+    limitLabel->setFont(limitLabelFont);
+    addItem(limitLabel);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(countDown()));
+
+    /* create stars */
+    for(int i=0; i<3; i++)
+    {
+        star[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/StarSquare.png"));   // test pic
+        star[i]->setScale(0.125);
+        star[i]->setPos(i*80+150, 50);
+        addItem(star[i]);
+
+        finalstar[i] = new QGraphicsPixmapItem(QPixmap(":/images/images/StarSquare.png"));   // test pic
+        finalstar[i]->setZValue(1);
+        finalstar[i]->setScale(0.125);
+        finalstar[i]->setPos(350+i*100, 400);
+        addItem(finalstar[i]);
+    }
 
     /* connect animation */
     QObject::connect(linkgroup, SIGNAL(finished()), this, SLOT(endDisappearAnimation()));
@@ -156,6 +171,9 @@ GameScene::GameScene(QObject *parent)
 
 void GameScene::init()
 {
+    if(isAnimation)
+        return; // prevent restart during animation
+
     /* get number of rank */
     QSqlQuery qry;
     qry.exec(QString("SELECT COUNT(*) FROM %1").arg(tbName));
@@ -181,7 +199,7 @@ void GameScene::init()
     /* init gameover */
     resetIcon();
     theEnd = false;
-    isWin = false;
+//    isWin = false;
     gameoverBG->hide();
     gameoverBG->setZValue(1);
     gameoverLabel->hide();
@@ -220,7 +238,17 @@ void GameScene::init()
         for(int j=0; j<wnum; j++)
             squares[i][j]->setOpacity(1);
 
-    timeLabel->hide();
+    /* init limitLabel */
+    if(mode==STEP)
+    {
+        limitLabel->setText("2");
+        timer->stop();
+    }
+    else if(mode==TIME)
+    {
+        limitLabel->setText("50");
+        timer->start(1000);
+    }
 
     /* init special link */
     specialLink = false;
@@ -230,6 +258,11 @@ void GameScene::init()
 
     /* init addvalue */
     addvalue = 0;
+
+    /* init star */
+    starNum = 0;
+    for(int i=0; i<3; i++)
+        star[i]->hide(), finalstar[i]->hide();
 
     /* test L check --*/
 //    squares[1][2]->setType(Square::FIRE);
@@ -298,12 +331,16 @@ void GameScene::setMode(GameScene::Mode mode)
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(backIconRect->contains(event->scenePos().toPoint()) && theEnd)
+    if(againIconRect->contains(event->scenePos().toPoint()) && theEnd)
+        {
+            if(!Mainwindow::soundMute)
+                againIcon->playClickSound();
+            init();
+        }
+    else if(backIconRect->contains(event->scenePos().toPoint()) && theEnd)
     {
         if(!Mainwindow::soundMute)
             backIcon->playClickSound();
-        if(isWin)
-            insertRank();
         emit pressBack();
     }
 
@@ -371,9 +408,10 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 }
 
-void GameScene::keyPressEvent(QKeyEvent *event)
+void GameScene::keyPressEvent(QKeyEvent *event) // cheat code
 {
-
+    if(event->key()==Qt::Key_Plus)
+        score->setText(QString::number(score->text().toInt()+500)), updateStar();
 }
 
 bool GameScene::set3Link()
@@ -640,20 +678,69 @@ bool GameScene::setLink()
 
 
 
-int GameScene::checkend()
+bool GameScene::checkend()
 {
-
+    if(mode==STEP)
+        return (limitLabel->text().toInt()==0);
+    else if(mode==TIME)
+        return (limitLabel->text().toInt()<0  && !timer->isActive());
 }
 
 void GameScene::gameover()
 {
+    if(mode == GameScene::TIME)
+        timer->stop();
 
+    /* insert user and score to database */
+    insertRank();
+    qDebug() << "is gameover";  //  test
+
+    gameoverScore->setText(score->text());
+    QSqlQuery qry;
+    if(qry.exec(QString("SELECT score FROM %1 WHERE name GLOB '%2' ORDER BY score DESC").arg(tbName, userName)))
+    {
+        qry.next();
+        bestScore->setText(qry.value(0).toString());
+    }
+    else
+        qDebug() << "Fail to get best score";
+
+    /* set gameover title */
+    if(starNum==0)
+        gameoverLabel->setText("Bad    !!!!");
+    else if(starNum==1)
+        gameoverLabel->setText("Not  Bad  ~");
+    else if(starNum==2)
+        gameoverLabel->setText("Good  Job  ~");
+    else if(starNum==3)
+        gameoverLabel->setText("Perfect  !!!");
+
+    /* show star */
+    for(int i=0; i<starNum; i++)
+        finalstar[i]->show();
+
+    /* show gameover panel and set flag */
+    gameoverBG->show();
+    gameoverLabel->show();
+    gameoverScoreLabel->show();
+    bestScoreLabel->show();
+    gameoverScore->show();
+    bestScore->show();
+    againIcon->show();
+    backIcon->show();
+    againIcon->setSoundFlag(true);
+    backIcon->setSoundFlag(true);
+    theEnd = true;
+    //    qDebug() << "gameover" << endl;
 }
 
 void GameScene::addScore()
 {
     int newScore = score->text().toInt()+addvalue;
     score->setText(QString::number(newScore));
+
+    /* update star */
+    updateStar();
 }
 
 void GameScene::startLinkAnimation()
@@ -713,6 +800,23 @@ void GameScene::setSpecial()
     memset(newspecial, 0, sizeof(newspecial));
 }
 
+void GameScene::updateStar()
+{
+    /* update star number */
+    if(score->text().toInt()>=1500)
+        starNum = 3;
+    else if(score->text().toInt()>=1000)
+        starNum = 2;
+    else if(score->text().toInt()>=500)
+        starNum = 1;
+    else
+        starNum = 0;
+
+    /* show star */
+    for(int i=0; i<starNum; i++)
+        star[i]->show();
+}
+
 void GameScene::endFallAnimation()
 {
     /* reset islink */
@@ -734,6 +838,13 @@ void GameScene::endFallAnimation()
     if(!hasLink)
     {
         isAnimation = false;
+        if(mode==STEP)
+        {
+            int destep = limitLabel->text().toInt()-1;
+            limitLabel->setText(QString::number(destep));
+        }
+        if(checkend())  // step check end
+            gameover();
         return;
     }
     startLinkAnimation();
@@ -779,11 +890,19 @@ void GameScene::endExchangeAnimation()
     }
 }
 
-//void GameScene::countDown()
-//{
-//    int nextTime = timeLabel->text().toInt()-1;
-//    if(nextTime == -1)
-//        gameover();
-//    else
-//        timeLabel->setText(QString::number(nextTime));
-//}
+void GameScene::countDown()
+{
+    int nextTime = limitLabel->text().toInt()-1;
+    if(nextTime<0)  // time mode check end
+    {
+        if(isAnimation)
+            return;
+        else
+        {
+            timer->stop();
+            gameover();
+            return;
+        }
+    }
+    limitLabel->setText(QString::number(nextTime));
+}

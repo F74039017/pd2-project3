@@ -27,9 +27,8 @@ private:
     QMenu *muteMenu;
     QAction *restartAct;
     QAction *giveupAct;
-    QAction *survivalAct;
-    QAction *classicAct;
-    QAction *xtileAct;
+    QAction *stepAct;
+    QAction *timeAct;
     QAction *soundMuteAct;
     QAction *musicMuteAct;
     Game *game;

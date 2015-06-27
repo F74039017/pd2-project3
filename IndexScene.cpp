@@ -8,22 +8,22 @@
 IndexScene::IndexScene(QObject *parent)
     :QGraphicsScene(parent)
 {
-    indexBG = new QGraphicsPixmapItem(QPixmap(":/images/images/index_bg.png"));
+    indexBG = new QGraphicsPixmapItem(QPixmap(":/images/images/index_BG.png"));
     indexBG->setZValue(-1);
     addItem(indexBG);
-    setSceneRect(0,0,500,650);
+    setSceneRect(0,0,1000,650);
 
     /* start icon */
     startIcon = new Icon(Icon::START);
     startIcon->setScale(0.3);
-    startIcon->setPos(150, 350);
+    startIcon->setPos(200, 400);
     addItem(startIcon);
     startIcon->setSoundFlag(true);
 
     /* rank icon */
     rankIcon = new Icon(Icon::RANK);
     rankIcon->setScale(0.3);
-    rankIcon->setPos(150, 475);
+    rankIcon->setPos(650, 400);
     addItem(rankIcon);
     rankIcon->setSoundFlag(true);
 
@@ -31,17 +31,17 @@ IndexScene::IndexScene(QObject *parent)
     int w, h;
     w = startIcon->boundingRect().width()*0.3;
     h = startIcon->boundingRect().height()*0.3;
-    startIconRect = new QRect(150, 350, w, h);
-    rankIconRect = new QRect(150, 475, w, h);
+    startIconRect = new QRect(200, 400, w, h);
+    rankIconRect = new QRect(650, 400, w, h);
     w = startIcon->boundingRect().width()*0.23;
     h = startIcon->boundingRect().height()*0.23;
-    backIconRect = new QRect(300, 550, w, h);
+    backIconRect = new QRect(550, 550, w, h);
 //    qDebug() << *startIconRect << " " << *rankIconRect;
 
     /* add rankBG */
     rankBG = new QGraphicsPixmapItem(QPixmap(":/images/images/rank_border.png"));
     rankBG->setScale(0.65);
-    rankBG->setPos(25, 50);
+    rankBG->setPos(275, 50);
     rankBG->setZValue(1);
     addItem(rankBG);
     rankBG->hide();
@@ -50,7 +50,7 @@ IndexScene::IndexScene(QObject *parent)
     /* add backIcon */
     backIcon = new Icon(Icon::BACK);
     backIcon->setScale(0.23);
-    backIcon->setPos(300, 550);
+    backIcon->setPos(550, 550);
     backIcon->setZValue(2);
     addItem(backIcon);
     backIcon->hide();
@@ -63,7 +63,7 @@ IndexScene::IndexScene(QObject *parent)
     {
         rankID[i] = new QGraphicsSimpleTextItem(QString("%1.").arg(i+1));
         rankID[i]->setZValue(2);
-        rankID[i]->setPos(60, 162+i*38.5);
+        rankID[i]->setPos(310, 162+i*38.5);
         rankID[i]->setFont(rankFont);
         addItem(rankID[i]);
         rankID[i]->hide();
@@ -74,7 +74,7 @@ IndexScene::IndexScene(QObject *parent)
     {
         rankName[i] = new QGraphicsSimpleTextItem(QString("------"));
         rankName[i]->setZValue(2);
-        rankName[i]->setPos(110, 162+i*38.5);
+        rankName[i]->setPos(360, 162+i*38.5);
         rankName[i]->setFont(rankFont);
         addItem(rankName[i]);
         rankName[i]->hide();
@@ -85,7 +85,7 @@ IndexScene::IndexScene(QObject *parent)
     {
         rankScore[i] = new QGraphicsSimpleTextItem(QString("---"));
         rankScore[i]->setZValue(2);
-        rankScore[i]->setPos(320, 162+i*38.5);
+        rankScore[i]->setPos(570, 162+i*38.5);
         rankScore[i]->setFont(rankFont);
         addItem(rankScore[i]);
         rankScore[i]->hide();
@@ -93,7 +93,7 @@ IndexScene::IndexScene(QObject *parent)
 
     /* init bestScore */
     bestScore = new QGraphicsSimpleTextItem("Your Best: ");
-    bestScore->setPos(55, 560);
+    bestScore->setPos(305, 560);
     bestScore->setBrush(QBrush(QColor(Qt::white)));
     bestScore->setZValue(2);
     QFont bestScoreFont("URW Chancery L", 20);
