@@ -41,6 +41,9 @@ Mainwindow::Mainwindow(QWidget *parent, Qt::WindowFlags flags)
     mapper->setMapping(rule_enAct, 2);
     mapper->setMapping(rule_zhAct, 3);
     QObject::connect(mapper, SIGNAL(mapped(int)), this, SLOT(showRule(int)));
+        /* Quit */
+    quitAct = new QAction("&Bye", this);
+    QObject::connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
 
 
     /* create menu */
@@ -64,6 +67,9 @@ Mainwindow::Mainwindow(QWidget *parent, Qt::WindowFlags flags)
     infoMenu->addAction(lastrecordAct);
     infoMenu->addAction(rule_enAct);
     infoMenu->addAction(rule_zhAct);
+        /* Quit */
+    quitMenu = menuBar()->addMenu("&Quit");
+    quitMenu->addAction(quitAct);
 
     /* rule dialog */
     ruleDia = new QMessageBox();

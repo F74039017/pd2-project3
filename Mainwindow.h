@@ -34,6 +34,7 @@ private:
     QMenu *modeMenu;
     QMenu *muteMenu;
     QMenu *infoMenu;
+    QMenu *quitMenu;
     QAction *restartAct;
     QAction *giveupAct;
     QAction *stepAct;
@@ -43,6 +44,7 @@ private:
     QAction *lastrecordAct;
     QAction *rule_enAct;
     QAction *rule_zhAct;
+    QAction *quitAct;
     QMessageBox *ruleDia;
     QSignalMapper *mapper;
     Game *game;
