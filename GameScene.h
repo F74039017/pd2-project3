@@ -36,6 +36,7 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void init();
+    bool getisAnimation();
 
 signals:
     void pressBack();
@@ -65,8 +66,8 @@ private:
     QRect squaresRect[hnum][wnum];
     bool theEnd;
     bool isAnimation;
-    IconBack *backIcon;
-    IconAgain *againIcon;
+    Icon *backIcon;
+    Icon *againIcon;
     QRect *againIconRect;
     QRect *backIconRect;
     QParallelAnimationGroup *linkgroup;

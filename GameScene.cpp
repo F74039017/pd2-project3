@@ -182,8 +182,6 @@ GameScene::~GameScene()
     delete againIconRect;
     delete backIconRect;
     delete linkgroup;
-    delete fallgroup;
-    delete fallgroup2;
     delete fallSquenceGroup;
     delete exchangeGroup;
     delete reexchangeGroup;
@@ -293,6 +291,11 @@ void GameScene::init()
     starNum = 0;
     for(int i=0; i<3; i++)
         star[i]->hide(), finalstar[i]->hide();
+}
+
+bool GameScene::getisAnimation()
+{
+    return isAnimation;
 }
 
 void GameScene::initsquares()

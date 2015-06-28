@@ -26,8 +26,6 @@ signals:
 
 public slots:
     void setLastRecord(int star, int score);
-
-public slots:
     void restart();
     void toGameScene();
     void toIndexScene();

@@ -24,9 +24,9 @@ signals:
 private:
     QGraphicsPixmapItem *indexBG;
     QGraphicsPixmapItem *rankBG;
-    IconStart *startIcon;
-    IconRank *rankIcon;
-    IconBack *backIcon;
+    Icon *startIcon;
+    Icon *rankIcon;
+    Icon *backIcon;
     QRect *startIconRect;
     QRect *rankIconRect;
     QRect *backIconRect;

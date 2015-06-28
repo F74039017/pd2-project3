@@ -10,10 +10,10 @@ public:
     Icon(Icon::Type type, QGraphicsItem * parent=0);
     ~Icon();
     virtual void setImage();
+    virtual void setType(Icon::Type type) = 0;
     Icon::Type getType();
     void playClickSound();
     void setSoundFlag(bool flag);
-    virtual void setType(Icon::Type type) = 0;
 
 protected:
     Type type;

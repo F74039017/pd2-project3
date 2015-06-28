@@ -102,6 +102,8 @@ void Game::toGameScene()
 
 void Game::toIndexScene()
 {
+    if(gameScene->getisAnimation())
+        return;
     indexScene->resetIcon();
     setScene(indexScene);
     emit toIndex();

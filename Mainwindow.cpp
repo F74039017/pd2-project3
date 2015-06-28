@@ -31,9 +31,9 @@ Mainwindow::Mainwindow(QWidget *parent, Qt::WindowFlags flags)
     QObject::connect(soundMuteAct, SIGNAL(triggered()), this, SLOT(muteSound()));
         /* Info */
     mapper = new QSignalMapper(this);
-    lastrecordAct = new QAction("&lastrecordAct", this);
-    rule_enAct = new QAction("&rule_enAct", this);
-    rule_zhAct = new QAction("&rule_zhAct", this);
+    lastrecordAct = new QAction("&Last Record", this);
+    rule_enAct = new QAction("&rule(English)", this);
+    rule_zhAct = new QAction("&rule(Chinese)", this);
     QObject::connect(lastrecordAct, SIGNAL(triggered()), mapper, SLOT(map()));
     QObject::connect(rule_enAct, SIGNAL(triggered()), mapper, SLOT(map()));
     QObject::connect(rule_zhAct,SIGNAL(triggered()), mapper, SLOT(map()));
